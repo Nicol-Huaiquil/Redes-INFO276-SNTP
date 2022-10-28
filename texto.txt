@@ -1,0 +1,29 @@
+end map -> para saber puertos desocupados -> puerto sobre 9.000
+
+Cliente que redireccione el puertos, servicio UDP:
+        IP_origen    Puerto_origen
+        IP_destino   Puerto_destino
+
+investigación
+    que significa
+    porqué se inventó
+desarrollo
+entrega viernes 02 diciembre
+
+
+viernes 28
+viernes 4   NO ->   semana receso
+viernes 11
+viernes 18  NO ->        semana de facultad
+viernes 25
+Entrega viernes 02
+
+carta gant
+
+
+mint
+rocky
+fedora
+manjaro
+
+no usar interfáz gráfica para acostumbrarnos a la consola
