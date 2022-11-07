@@ -5,25 +5,25 @@ Cliente que redireccione el puertos, servicio UDP:
         IP_destino   Puerto_destino
 
 investigación
-    que significa
+    que significa, historia SNTP
     porqué se inventó
-desarrollo
+desarrollo SNTP
 entrega viernes 02 diciembre
 
 
-viernes 28
+viernes 28  X
 viernes 4   NO ->   semana receso
 viernes 11
 viernes 18  NO ->        semana de facultad
 viernes 25
 Entrega viernes 02
 
-carta gant
+Linux's?
+    mint
+    rocky
+    fedora
+    manjaro
 
-
-mint
-rocky
-fedora
-manjaro
-
-no usar interfáz gráfica para acostumbrarnos a la consola
+Recomendaciones del profe lazo: 
+    Hacer una carta gant para mejor distribución de trabajo con tiempo
+    No usar interfáz gráfica para acostumbrarnos a la consola
