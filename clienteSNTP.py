@@ -1,6 +1,6 @@
 import socket, struct, sys, time
 
-NTP_SERVER = '0.uk.pool.ntp.org'
+NTP_SERVER = '0.uk.pool.ntp.org' #host="127.0.0.1"
 TIME1970 = 2208988800
 
 def sntp_client():

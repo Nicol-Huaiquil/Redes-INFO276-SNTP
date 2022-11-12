@@ -25,7 +25,7 @@ while(True):
     print("Link bussy")
     clientMsg = format(message) 
     print(clientMsg)
-    time.sleep(30)
+    #time.sleep(30)
     # Sending a reply to client
     UDPServerSocket.sendto(bytesToSend, address)
     print("Link Available")
