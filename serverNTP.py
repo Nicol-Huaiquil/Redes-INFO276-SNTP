@@ -48,7 +48,7 @@ def _to_time(integ, frac, n=32):
     """
     return integ + float(frac)/2**n	
 		
-
+#32 bits de la parte integral + 32 bits de la parte fraccionaria hacen los 64 bits
 
 class NTPException(Exception):
     """Exception raised by this module."""
@@ -60,48 +60,53 @@ class NTP:
 
     _SYSTEM_EPOCH = datetime.date(*time.gmtime(0)[0:3])
     """system epoch"""
-    _NTP_EPOCH = datetime.date(1900, 1, 1)
+    _NTP_EPOCH = datetime.date(1900, 1, 1) #Hora 0
     """NTP epoch"""
     NTP_DELTA = (_SYSTEM_EPOCH - _NTP_EPOCH).days * 24 * 3600
     """delta between system and NTP time"""
 
     REF_ID_TABLE = {
+        #Ascii
             'DNC': "DNC routing protocol",
             'NIST': "NIST public modem",
             'TSP': "TSP time protocol",
             'DTS': "Digital Time Service",
+        ####
             'ATOM': "Atomic clock (calibrated)",
             'VLF': "VLF radio (OMEGA, etc)",
             'callsign': "Generic radio",
             'LORC': "LORAN-C radionavidation",
             'GOES': "GOES UHF environment satellite",
             'GPS': "GPS UHF satellite positioning",
+        #Address??
+            'address' : "Secondary Reference",
     }
     """reference identifier table"""
 
-    STRATUM_TABLE = {
+    STRATUM_TABLE = { #Revisar Estrato
         0: "unspecified",
         1: "primary reference",
+        2: "secondary reference", #[2-15]
     }
     """stratum table"""
 
-    MODE_TABLE = {
-        0: "unspecified",
-        1: "symmetric active",
-        2: "symmetric passive",
-        3: "client",
-        4: "server",
-        5: "broadcast",
-        6: "reserved for NTP control messages",
-        7: "reserved for private use",
+    MODE_TABLE = { #Modo
+        0: "unspecified", #no especificado
+        1: "symmetric active", #activo simétrico
+        2: "symmetric passive", #pasivo simétrico
+        3: "client", #cliente
+        4: "server", #servidor
+        5: "broadcast", #transmisión
+        6: "reserved for NTP control messages", #reservado para el mensaje de control NTP
+        7: "reserved for private use", #reservado para uso privado
     }
     """mode table"""
 
-    LEAP_TABLE = {
-        0: "no warning",
-        1: "last minute has 61 seconds",
-        2: "last minute has 59 seconds",
-        3: "alarm condition (clock not synchronized)",
+    LEAP_TABLE = { #LI
+        0: "no warning", #sin advertencia
+        1: "last minute has 61 seconds", #último minuto tiene 61 segundos
+        2: "last minute has 59 seconds", #último minuto tiene 59 segundos
+        3: "alarm condition (clock not synchronized)", #reloj no sincronizado
     }
     """leap indicator table"""
 
@@ -110,10 +115,10 @@ class NTPPacket:
     This represents an NTP packet.
     """
     
-    _PACKET_FORMAT = "!B B B b 11I"
+    _PACKET_FORMAT = "!B B B b 11I" ##11 Campos de tipo I
     """packet format to pack/unpack"""
 
-    def __init__(self, version=2, mode=3, tx_timestamp=0):
+    def __init__(self, version=3, mode=3, tx_timestamp=0): #version, actual 3 ¿MODO?
         """Constructor.
         Parameters:
         version      -- NTP version
@@ -126,27 +131,29 @@ class NTPPacket:
         """version"""
         self.mode = mode
         """mode"""
-        self.stratum = 0
+        self.stratum = 0 #Ver si se utiliza el [2-15] o se mantiene el 0
         """stratum"""
-        self.poll = 0
+        self.poll = 0 #número entero de 8 bits con signo (6 a 10)
         """poll interval"""
-        self.precision = 0
+        self.precision = 0 #número entero de 8 bits con signo (-6 a -18) 
         """precision"""
-        self.root_delay = 0
+        self.root_delay = 0 # número de punto fijo con signo de 32 bits (15 y 16 bits)
         """root delay"""
-        self.root_dispersion = 0
+        self.root_dispersion = 0 #numero de punto fijo sin signo de 32 bits (15 y 16 bits)
         """root dispersion"""
         self.ref_id = 0
         """reference clock identifier"""
-        self.ref_timestamp = 0
+        self.ref_timestamp = 0 #64 bits
         """reference timestamp"""
-        self.orig_timestamp = 0
+        self.orig_timestamp = 0 #64 bits del C a S
+        #¿USAR ESTA ESPECIFICACION?
         self.orig_timestamp_high = 0
         self.orig_timestamp_low = 0
         """originate timestamp"""
-        self.recv_timestamp = 0
+        self.recv_timestamp = 0 #64 bits llegó al S
         """receive timestamp"""
-        self.tx_timestamp = tx_timestamp
+        self.tx_timestamp = tx_timestamp #64 bits del S a C
+        #¿USAR ESTA ESPECIFICACION?
         self.tx_timestamp_high = 0
         self.tx_timestamp_low = 0
         """tansmit timestamp"""
@@ -257,9 +264,9 @@ class WorkThread(threading.Thread):
                 recvPacket = NTPPacket()
                 recvPacket.from_data(data)
                 timeStamp_high,timeStamp_low = recvPacket.GetTxTimeStamp()
-                sendPacket = NTPPacket(version=3,mode=4)
+                sendPacket = NTPPacket(version=3,mode=4) #inicia en modo servidor y la versión 3 para sntp
                 sendPacket.stratum = 2
-                sendPacket.poll = 10
+                sendPacket.poll = 10 #[de 6 a 10]
                 '''
                 sendPacket.precision = 0xfa
                 sendPacket.root_delay = 0x0bfa
