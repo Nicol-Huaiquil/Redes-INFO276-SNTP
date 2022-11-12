@@ -1,11 +1,11 @@
 import socket, struct, sys, time
 
-NTP_SERVER = '0.uk.pool.ntp.org' #host="127.0.0.1"
+NTP_SERVER = '127.0.0.1' #host="127.0.0.1"
 TIME1970 = 2208988800
 
 def sntp_client():
     client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    data = '\x1b' + 47 * '\0'
+    data = b'\x1b' + 47 * b'\0'
     client.sendto(data, (NTP_SERVER, 123))
     data, address = client.recvfrom(1024)
     if data:
