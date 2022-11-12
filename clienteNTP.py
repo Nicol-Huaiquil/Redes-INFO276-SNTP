@@ -5,8 +5,8 @@ import struct
 import time
 
 NTP_PACKET_FORMAT = "!12I"
-NTP_DELTA = 2208988800  # 1970-01-01 00:00:00
-NTP_QUERY = b'\x1b' + 47 * b'\0'  
+NTP_DELTA = 2208988800  # 1970-01-01 00:00:00 hora de referencia
+NTP_QUERY = b'\x1b' + 47 * b'\0'  #Tipo NTP
 
 def ntp_time(host="127.0.0.1", port=123):
     with closing(socket( AF_INET, SOCK_DGRAM)) as s:

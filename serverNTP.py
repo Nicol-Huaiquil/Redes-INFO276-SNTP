@@ -118,7 +118,7 @@ class NTPPacket:
     _PACKET_FORMAT = "!B B B b 11I" ##11 Campos de tipo I
     """packet format to pack/unpack"""
 
-    def __init__(self, version=3, mode=3, tx_timestamp=0): #version, actual 3 ¿MODO?
+    def __init__(self, version=3, mode=3, tx_timestamp=0): 
         """Constructor.
         Parameters:
         version      -- NTP version
@@ -145,13 +145,17 @@ class NTPPacket:
         """reference clock identifier"""
         self.ref_timestamp = 0 #64 bits
         """reference timestamp"""
+        
+        
         self.orig_timestamp = 0 #64 bits del C a S
         #¿USAR ESTA ESPECIFICACION?
         self.orig_timestamp_high = 0
         self.orig_timestamp_low = 0
         """originate timestamp"""
+
         self.recv_timestamp = 0 #64 bits llegó al S
         """receive timestamp"""
+
         self.tx_timestamp = tx_timestamp #64 bits del S a C
         #¿USAR ESTA ESPECIFICACION?
         self.tx_timestamp_high = 0
@@ -172,16 +176,17 @@ class NTPPacket:
                 self.poll,
                 self.precision,
                 _to_int(self.root_delay) << 16 | _to_frac(self.root_delay, 16),
-                _to_int(self.root_dispersion) << 16 |
-                _to_frac(self.root_dispersion, 16),
+                _to_int(self.root_dispersion) << 16 | _to_frac(self.root_dispersion, 16),
                 self.ref_id,
                 _to_int(self.ref_timestamp),
                 _to_frac(self.ref_timestamp),
                 #Change by lichen, avoid loss of precision
                 self.orig_timestamp_high,
                 self.orig_timestamp_low,
+                
                 _to_int(self.recv_timestamp),
                 _to_frac(self.recv_timestamp),
+
                 _to_int(self.tx_timestamp),
                 _to_frac(self.tx_timestamp))
         except struct.error:
@@ -211,14 +216,14 @@ class NTPPacket:
         self.root_delay = float(unpacked[4])/2**16
         self.root_dispersion = float(unpacked[5])/2**16
         self.ref_id = unpacked[6]
-        self.ref_timestamp = _to_time(unpacked[7], unpacked[8])
-        self.orig_timestamp = _to_time(unpacked[9], unpacked[10])
-        self.orig_timestamp_high = unpacked[9]
-        self.orig_timestamp_low = unpacked[10]
-        self.recv_timestamp = _to_time(unpacked[11], unpacked[12])
-        self.tx_timestamp = _to_time(unpacked[13], unpacked[14])
-        self.tx_timestamp_high = unpacked[13]
-        self.tx_timestamp_low = unpacked[14]
+        self.ref_timestamp = unpacked[7] #_to_time(unpacked[7], unpacked[8])
+        self.orig_timestamp = unpacked[9]#_to_time(unpacked[9], unpacked[10])
+        self.orig_timestamp_high = unpacked[9] #parte integral
+        self.orig_timestamp_low = unpacked[10] #parte fraccionaria
+        self.recv_timestamp = unpacked[11] #_to_time(unpacked[11], unpacked[12])
+        self.tx_timestamp = unpacked[13] #_to_time(unpacked[13], unpacked[14])
+        self.tx_timestamp_high = unpacked[13] #parte integral
+        self.tx_timestamp_low = unpacked[14] #parte fraccionaria
 
     def GetTxTimeStamp(self):
         return (self.tx_timestamp_high,self.tx_timestamp_low)
@@ -274,7 +279,7 @@ class WorkThread(threading.Thread):
                 sendPacket.ref_id = 0x808a8c2c
                 '''
                 sendPacket.ref_timestamp = recvTimestamp-5
-                sendPacket.SetOriginTimeStamp(timeStamp_high,timeStamp_low)
+                sendPacket.SetOriginTimeStamp(timeStamp_high,timeStamp_low) #AAAAAAAAAAAAAAAAAAAAAAAAA
                 sendPacket.recv_timestamp = recvTimestamp
                 sendPacket.tx_timestamp = system_to_ntp_time(time.time())
                 socket.sendto(sendPacket.to_data(),addr)
