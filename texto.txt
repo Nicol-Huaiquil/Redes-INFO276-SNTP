@@ -11,11 +11,18 @@ desarrollo SNTP
 entrega viernes 02 diciembre
 
 
-viernes 28  X
+viernes 28  SI -> leer rfc's
 viernes 4   NO ->   semana receso
-viernes 11
-viernes 18  NO ->        semana de facultad
-viernes 25
+JUEVES 10   SI -> mestra de codigo
+viernes 11  NO ->   paseo al museo
+
+Lunes 14 -> Prueba N°1 servidor SNTP
+
+viernes 18  NO ->   semana de facultad
+
+JUEVES 24   NO -> Prueba 2
+viernes 25 DEBERIA
+
 Entrega viernes 02
 
 Linux's?
