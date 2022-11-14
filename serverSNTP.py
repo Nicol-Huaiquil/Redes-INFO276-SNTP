@@ -289,7 +289,7 @@ class WorkThread(threading.Thread):
                 
         
 listenIp = "192.168.1.108"
-listenPort = 9001
+listenPort = 9001 #123
 socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 socket.bind((listenIp,listenPort))
 print("local socket: ", socket.getsockname())

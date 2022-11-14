@@ -34,3 +34,13 @@ Linux's?
 Recomendaciones del profe lazo: 
     Hacer una carta gant para mejor distribución de trabajo con tiempo
     No usar interfáz gráfica para acostumbrarnos a la consola
+
+
+Hacer prueba con un bucle 5 iteraciones donde llame a la funcion clientesntp.py
+
+En linux utilizamos el puerto 123 y debemos dejarlo cerrado.
+No sabemos cómo indicar el puerto por comando en Linux.
+No sabemos cómo se ejecuta el  server con el cliente de windows y mac.
+Los computadores del mancera no cuentan con wifi y deben conectarse a la red por cable.
+
+
