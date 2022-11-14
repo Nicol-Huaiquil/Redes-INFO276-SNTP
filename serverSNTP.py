@@ -288,8 +288,8 @@ class WorkThread(threading.Thread):
                 continue
                 
         
-listenIp = "127.0.0.1"
-listenPort = 123
+listenIp = "192.168.1.108"
+listenPort = 9001
 socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 socket.bind((listenIp,listenPort))
 print("local socket: ", socket.getsockname())
