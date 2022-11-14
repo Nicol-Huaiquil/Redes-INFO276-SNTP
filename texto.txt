@@ -10,6 +10,8 @@ investigación
 desarrollo SNTP
 entrega viernes 02 diciembre
 
+nmap 0.0.0.0 -> para saber puertos ocupados
+
 
 viernes 28  SI -> leer rfc's
 viernes 4   NO ->   semana receso
@@ -40,7 +42,30 @@ Hacer prueba con un bucle 5 iteraciones donde llame a la funcion clientesntp.py
 
 En linux utilizamos el puerto 123 y debemos dejarlo cerrado.
 No sabemos cómo indicar el puerto por comando en Linux.
-No sabemos cómo se ejecuta el  server con el cliente de windows y mac.
+No sabemos como es el sntp de MAC
 Los computadores del mancera no cuentan con wifi y deben conectarse a la red por cable.
 
+Linux 
+    sudo apt update
+    sudo apt install sntp
+    sntp 192.168.1.108         con puerto 123
 
+MAC
+    Ir a fecha y hora
+    configuración
+    Fuente
+    Establecer
+    Colocar IP
+
+WINDOWS
+    Ir a fecha y hora
+    Cambiar tu hora para notar el cambio posterior
+    Agregar relojes para zonas horarias diferentes
+    Hora de internet
+    Cambiar la configuración
+    colocar IP
+    Actualizar ahora
+
+
+Revisar el RFC para informe 
+Informarnos sobre los protocolos
