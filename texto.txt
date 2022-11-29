@@ -1,71 +1,44 @@
-end map -> para saber puertos desocupados -> puerto sobre 9.000
+ REF_ID_TABLE = {
+        #Ascii
+            'DNC': "DNC routing protocol",
+            'NIST': "NIST public modem",
+            'TSP': "TSP time protocol",
+            'DTS': "Digital Time Service",
+        ####
+            'ATOM': "Atomic clock (calibrated)",
+            'VLF': "VLF radio (OMEGA, etc)",
+            'callsign': "Generic radio",
+            'LORC': "LORAN-C radionavidation",
+            'GOES': "GOES UHF environment satellite",
+            'GPS': "GPS UHF satellite positioning",
+        #Address??
+            'address' : "Secondary Reference",
+    }
+    """reference identifier table"""
 
-Cliente que redireccione el puertos, servicio UDP:
-        IP_origen    Puerto_origen
-        IP_destino   Puerto_destino
+    STRATUM_TABLE = { #Revisar Estrato
+        0: "unspecified",
+        1: "primary reference",
+        2: "secondary reference", #[2-15]
+    }
+    """stratum table"""
 
-investigación
-    que significa, historia SNTP
-    porqué se inventó
-desarrollo SNTP
-entrega viernes 02 diciembre
+    MODE_TABLE = { #Modo
+        0: "unspecified", #no especificado
+        1: "symmetric active", #activo simétrico
+        2: "symmetric passive", #pasivo simétrico
+        3: "client", #cliente
+        4: "server", #servidor
+        5: "broadcast", #transmisión
+        6: "reserved for NTP control messages", #reservado para el mensaje de control NTP
+        7: "reserved for private use", #reservado para uso privado
+    }
+    """mode table"""
 
-nmap 0.0.0.0 -> para saber puertos ocupados
-
-
-viernes 28  SI -> leer rfc's
-viernes 4   NO ->   semana receso
-JUEVES 10   SI -> mestra de codigo
-viernes 11  NO ->   paseo al museo
-
-Lunes 14 -> Prueba N°1 servidor SNTP
-
-viernes 18  NO ->   semana de facultad
-
-JUEVES 24   NO -> Prueba 2
-viernes 25 DEBERIA
-
-Entrega viernes 02
-
-Linux's?
-    mint
-    rocky
-    fedora
-    manjaro
-
-Recomendaciones del profe lazo: 
-    Hacer una carta gant para mejor distribución de trabajo con tiempo
-    No usar interfáz gráfica para acostumbrarnos a la consola
-
-
-Hacer prueba con un bucle 5 iteraciones donde llame a la funcion clientesntp.py
-
-En linux utilizamos el puerto 123 y debemos dejarlo cerrado.
-No sabemos cómo indicar el puerto por comando en Linux.
-No sabemos como es el sntp de MAC
-Los computadores del mancera no cuentan con wifi y deben conectarse a la red por cable.
-
-Linux 
-    sudo apt update
-    sudo apt install sntp
-    sntp 192.168.1.108         con puerto 123
-
-MAC
-    Ir a fecha y hora
-    configuración
-    Fuente
-    Establecer
-    Colocar IP
-
-WINDOWS
-    Ir a fecha y hora
-    Cambiar tu hora para notar el cambio posterior
-    Agregar relojes para zonas horarias diferentes
-    Hora de internet
-    Cambiar la configuración
-    colocar IP
-    Actualizar ahora
-
-
-Revisar el RFC para informe 
-Informarnos sobre los protocolos
+    LEAP_TABLE = { #LI
+        0: "no warning", #sin advertencia
+        1: "last minute has 61 seconds", #último minuto tiene 61 segundos
+        2: "last minute has 59 seconds", #último minuto tiene 59 segundos
+        3: "alarm condition (clock not synchronized)", #reloj no sincronizado
+    }
+    """leap indicator table"""
