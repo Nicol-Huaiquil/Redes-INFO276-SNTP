@@ -10,7 +10,7 @@ NTP_QUERY = b'\x1b' + 47 * b'\0'  #Tipo NTP
 
 #host="127.0.0.1" Local 
 #host="192.168.1.108"
-def ntp_time(host="127.0.0.1", port=123): 
+def ntp_time(host="192.168.1.108", port=123): 
     with closing(socket( AF_INET, SOCK_DGRAM)) as cliente:
         cliente.sendto(NTP_QUERY, (host, port))
         msg, address = cliente.recvfrom(1024)
