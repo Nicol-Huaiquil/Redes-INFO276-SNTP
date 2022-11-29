@@ -2,7 +2,7 @@ import socket, struct, sys, time
 
 #SNTP_SERVER="127.0.0.1" #Local
 SNTP_SERVER = '192.168.1.108' 
-Puerto = 9001
+Puerto = 123
 
 TIME1970 = 2208988800
 

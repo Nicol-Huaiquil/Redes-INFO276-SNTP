@@ -173,7 +173,7 @@ class WorkThread(threading.Thread):
                 
 #listenIp = "127.0.0.1"
 listenIp = "192.168.1.108"
-listenPort = 9001
+listenPort = 123
 
 socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 socket.bind((listenIp,listenPort))
