@@ -66,6 +66,7 @@ class NTPPacket:
         self.tx_timestamp_high = 0
         self.tx_timestamp_low = 0   #tansmit timestamp
         
+#codifica la data en un arreglo de bytes para poder enviarla al cliente
     def to_data(self):
         try:
             packed = struct.pack(NTPPacket._PACKET_FORMAT,
@@ -91,6 +92,7 @@ class NTPPacket:
             raise NTPException("Invalid NTP packet fields.")
         return packed   #buffer that can be sent over a socket
 
+#Decodifica la data de la cola que se recibe desde el cliente
     def from_data(self, data):
         try:
             unpacked = struct.unpack(NTPPacket._PACKET_FORMAT, data[0:struct.calcsize(NTPPacket._PACKET_FORMAT)])
@@ -137,16 +139,18 @@ class RecvThread(threading.Thread):
                 print("Received %d packets" % len(rlist))
                 for tempSocket in rlist:
                     try:
-                        data,addr = tempSocket.recvfrom(1024)
-                        recvTimestamp = recvTimestamp = system_to_ntp_time(time.time())
-                        taskQueue.put((data,addr,recvTimestamp))
+                        data,addr = tempSocket.recvfrom(1024)                               #Espera a que llegue una solicitud
+                        recvTimestamp = recvTimestamp = system_to_ntp_time(time.time())     #Hora en la que llega el mensaje
+                        taskQueue.put((data,addr,recvTimestamp))                            #Coloca la data en la cola
                     except socket.error:
                         print("msg")
 
+#Prepara el paquete para ser enviado
 class WorkThread(threading.Thread):
     def __init__(self,socket):
         threading.Thread.__init__(self)
         self.socket = socket
+#
     def run(self):
         global taskQueue,stopFlag
         while True:
@@ -154,18 +158,22 @@ class WorkThread(threading.Thread):
                 print("WorkThread Ended")
                 break
             try:
-                data,addr,recvTimestamp = taskQueue.get(timeout=1)
+                #Se crea el paquete de recepción
+                data,addr,recvTimestamp = taskQueue.get(timeout=1)      #Desde la cola obtiene los datos
                 recvPacket = NTPPacket()
-                recvPacket.from_data(data)
-                timeStamp_high,timeStamp_low = recvPacket.GetTxTimeStamp()
-                sendPacket = NTPPacket(version=3,mode=4) #inicia en modo servidor y la versión 3 para sntp
+                recvPacket.from_data(data)                              #decodifica la data de la cola
+                timeStamp_high,timeStamp_low = recvPacket.GetTxTimeStamp()      #Parte entera y fraccionaria del tiempo en el que el cliente envió el mensaje
+                
+                #El servidor crea un nuevo paquete de respuesta
+                sendPacket = NTPPacket(version=3,mode=4) 
                 sendPacket.stratum = 2
-                sendPacket.poll = 10 #[de 6 a 10]
-                sendPacket.ref_timestamp = recvTimestamp-5
-                sendPacket.SetOriginTimeStamp(timeStamp_high,timeStamp_low) #AAAAAAAAAAAAAAAAAAAAAAAAA
-                sendPacket.recv_timestamp = recvTimestamp
-                sendPacket.tx_timestamp = system_to_ntp_time(time.time())
-
+                sendPacket.poll = 10 
+                sendPacket.ref_timestamp = recvTimestamp-5                      #REF = Hora en la que llegó el mensaje - 5
+                sendPacket.SetOriginTimeStamp(timeStamp_high,timeStamp_low)     #ORIGEN = Hora en la que el cliente envió el mensaje
+                sendPacket.recv_timestamp = recvTimestamp                       #RECV = Hora en la que llegó el mensaje al servidor
+                sendPacket.tx_timestamp = system_to_ntp_time(time.time())       #TX = Hora a la que se envia el mensaje desde el servidor
+                
+                #Envia el paquete codificado, to_data lo codifica
                 socket.sendto(sendPacket.to_data(),addr)
                 print("Sended to %s:%d" % (addr[0],addr[1]))
             except queue.Empty:
