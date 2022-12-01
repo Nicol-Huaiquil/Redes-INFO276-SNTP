@@ -3,6 +3,11 @@ import datetime, socket, struct, time, queue, threading, select
 taskQueue = queue.Queue()   #cola para guardar paquetes
 stopFlag = False    #Para parar el servidor
 
+class NTP:
+    _SYSTEM_EPOCH = datetime.date(*time.gmtime(0)[0:3]) #Hora 0 1970
+    _NTP_EPOCH = datetime.date(1900, 1, 1) #Hora NTP
+    NTP_DELTA = (_SYSTEM_EPOCH - _NTP_EPOCH).days * 24 * 3600   #Tiempo en formato NTP
+
 #Traduce el tiempo en formato de sistema al tiempo en formato NTP
 def system_to_ntp_time(timestamp):
     return timestamp + NTP.NTP_DELTA    
@@ -23,11 +28,6 @@ def _to_time(integ, frac, n=32):
 class NTPException(Exception):
     pass
 
-class NTP:
-    _SYSTEM_EPOCH = datetime.date(*time.gmtime(0)[0:3]) #Hora 0 1970
-    _NTP_EPOCH = datetime.date(1900, 1, 1) #Hora NTP
-    NTP_DELTA = (_SYSTEM_EPOCH - _NTP_EPOCH).days * 24 * 3600   #Tiempo en formato NTP
-
 class NTPPacket:
     _PACKET_FORMAT = "!B B B b 11I" #Formato del mensaje del paquete NTP B,b = 1 Bytes; I = 4 Bytes
 
@@ -43,11 +43,9 @@ class NTPPacket:
         self.root_dispersion = 0    #Root dispersion
         self.ref_id = 0             #Reference clock identifier por reloj
         self.ref_timestamp = 0      #Reference timestamp
-
         self.orig_timestamp = 0     #Originate Timestamp
         self.orig_timestamp_high = 0#Originate Timestamp Parte entera
         self.orig_timestamp_low = 0 #Originate Timestamp Parte fraccionaria
-
         self.recv_timestamp = 0     #Receive Timestamp
         self.tx_timestamp = tx_timestamp #Transmit Timestamp
         self.tx_timestamp_high = 0 #Transmit Timestamp parte entera
@@ -69,13 +67,10 @@ class NTPPacket:
                 self.ref_id,
                 _to_int(self.ref_timestamp),
                 _to_frac(self.ref_timestamp),
-                
                 self.orig_timestamp_high,
                 self.orig_timestamp_low,
-                
                 _to_int(self.recv_timestamp),
                 _to_frac(self.recv_timestamp),
-
                 _to_int(self.tx_timestamp),
                 _to_frac(self.tx_timestamp)
                 )
@@ -90,7 +85,6 @@ class NTPPacket:
             unpacked = struct.unpack(NTPPacket._PACKET_FORMAT, data[0:struct.calcsize(NTPPacket._PACKET_FORMAT)])
         except struct.error:
             raise NTPException("Invalid NTP packet.")
-
         self.leap = unpacked[0] >> 6 & 0x3
         self.version = unpacked[0] >> 3 & 0x7
         self.mode = unpacked[0] & 0x7
@@ -101,13 +95,10 @@ class NTPPacket:
         self.root_dispersion = float(unpacked[5])/2**16
         self.ref_id = unpacked[6]
         self.ref_timestamp = _to_time(unpacked[7], unpacked[8])
-
         self.orig_timestamp = _to_time(unpacked[9], unpacked[10])
         self.orig_timestamp_high = unpacked[9]  #parte entera
         self.orig_timestamp_low = unpacked[10]  #parte fraccionaria
-
         self.recv_timestamp = _to_time(unpacked[11], unpacked[12])
-
         self.tx_timestamp = _to_time(unpacked[13], unpacked[14])
         self.tx_timestamp_high = unpacked[13]   #parte entera
         self.tx_timestamp_low = unpacked[14]    #parte fraccionaria
@@ -116,8 +107,8 @@ class NTPPacket:
         return (self.tx_timestamp_high,self.tx_timestamp_low)
 
     def SetOriginTimeStamp(self,high,low):
-        self.orig_timestamp_high = high #entero
-        self.orig_timestamp_low = low   #fraccionaria
+        self.orig_timestamp_high = high #Parte entera
+        self.orig_timestamp_low = low   #Parte fraccionaria
         
 #Para enviar y recibir paquetes        
 class RecvThread(threading.Thread):
@@ -160,16 +151,14 @@ class WorkThread(threading.Thread):
                 recvPacket.from_data(data)                                      #Objeto con data de cliente
                 timeStamp_high,timeStamp_low = recvPacket.GetTxTimeStamp()      #Parte entera y fraccionaria del tiempo en el que el 
                                                                                 #cliente envió el mensaje
-                #El servidor crea un nuevo paquete de respuesta
+                #El servidor crea un nuevo paquete de respuestas
                 sendPacket = NTPPacket(version=3,mode=4)                        #Se crea el objeto NTPPacket con versión 3 y mode 4          
                 sendPacket.stratum = 2                                          #Por sercondary reference SNTP
                 sendPacket.poll = recvPacket.poll                               #Intervalo máximo entre mensajes sucesivos en segundos 
                 sendPacket.ref_timestamp = recvTimestamp-5                      #REF = fecha en la que llegó el mensaje - 5
                 sendPacket.SetOriginTimeStamp(timeStamp_high,timeStamp_low)     #ORIGEN = fecha en la que el cliente envió el mensaje
-                
                 sendPacket.recv_timestamp = recvTimestamp                       #RECV = fecha en la que llegó el mensaje al servidor
                 sendPacket.tx_timestamp = system_to_ntp_time(time.time())       #TX = fecha a la que se envia el mensaje desde el servidor
-                
                 #Envia el paquete codificado, to_data lo codifica
                 socket.sendto(sendPacket.to_data(),addr)
                 print("Sended to %s:%d" % (addr[0],addr[1]))
