@@ -4,7 +4,7 @@ taskQueue = queue.Queue()   #cola para guardar paquetes
 stopFlag = False    #Para parar el servidor
 
 class NTP:
-    _SYSTEM_EPOCH = datetime.date(*time.gmtime(0)[0:3]) #Hora 0 1970
+    _SYSTEM_EPOCH = datetime.date(*time.gmtime(0)[0:3]) #Hora 0 1970 UTC
     _NTP_EPOCH = datetime.date(1900, 1, 1) #Hora NTP
     NTP_DELTA = (_SYSTEM_EPOCH - _NTP_EPOCH).days * 24 * 3600   #Tiempo en formato NTP
 
@@ -104,7 +104,7 @@ class NTPPacket:
         self.tx_timestamp_low = unpacked[14]    #parte fraccionaria
 
     def GetTxTimeStamp(self):
-        return (self.tx_timestamp_high,self.tx_timestamp_low)
+        return (self.tx_timestamp_high, self.tx_timestamp_low)
 
     def SetOriginTimeStamp(self,high,low):
         self.orig_timestamp_high = high #Parte entera
@@ -152,7 +152,7 @@ class WorkThread(threading.Thread):
                 timeStamp_high,timeStamp_low = recvPacket.GetTxTimeStamp()      #Parte entera y fraccionaria del tiempo en el que el 
                                                                                 #cliente envió el mensaje
                 #El servidor crea un nuevo paquete de respuestas
-                sendPacket = NTPPacket(version=3,mode=4)                        #Se crea el objeto NTPPacket con versión 3 y mode 4          
+                sendPacket = NTPPacket(version=4,mode=4)                        #Se crea el objeto NTPPacket con versión 3 y mode 4          
                 sendPacket.stratum = 2                                          #Por sercondary reference SNTP
                 sendPacket.poll = recvPacket.poll                               #Intervalo máximo entre mensajes sucesivos en segundos 
                 sendPacket.ref_timestamp = recvTimestamp-5                      #REF = fecha en la que llegó el mensaje - 5
